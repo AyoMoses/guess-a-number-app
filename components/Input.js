@@ -7,9 +7,10 @@ import {TextInput, StyleSheet} from 'react-native';
 // A FUNCTIONAL COMPONENT
 
 const Input = props => {
-    return <TextInput style={{...styles.input, ...props.style}} />
+    return <TextInput {...props} style={{...styles.input, ...props.style}} />
 };
 
+// ADDING ...PROPS ALLOW US TO BE ABLE TO OVERRIDE THE COMPONENT PROPS AND FORWARD IT 
 
 
 const styles = StyleSheet.create({
