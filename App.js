@@ -6,7 +6,7 @@ import Header from "./components/Header";
 import StartGameScreen from "./screens/StartGameScreen";
 import GameScreen from "./screens/GameScreen";
 import GameOverScreen from "./screens/GameOverScreen";
-import { AppLoading } from 'expo';
+import { AppLoading } from "expo";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -25,7 +25,7 @@ export default function App() {
       <AppLoading
         startAsync={fetchFonts}
         onFinish={() => setDataLoaded(true)}
-        onError={(err) => console.log(err)} //rare cases when custom font loading fails
+        onError={err => console.log(err)} //rare cases when custom font loading fails
       />
     );
     //do not return app content but return appLoading. After fetching and resolving font promise, setDataLoaded to true
