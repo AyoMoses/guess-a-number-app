@@ -45,7 +45,11 @@ export default function App() {
   };
 
   // BY ADDING onStartGame, StartGameScreen becomes a property to be used elsewhere i.e startGameScreen
-  let content = <StartGameScreen onStartGame={startGameHandler} />;
+  let content =  <GameOverScreen
+  roundsNumber={guessRounds}
+  userNumber={userNumber}
+  onRestart={configureNewGameHandler}
+/>;
 
   if (userNumber && guessRounds <= 0) {
     content = (
