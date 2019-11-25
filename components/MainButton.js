@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 
 import Colors from '../constants/colors';
 import colors from "../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
+
+// IN THE <Text> FOR GLOABAL USE YOU CAN MAKE IT <Ionicons></Ionicons>
 
 const MainButton = props => {
   return (

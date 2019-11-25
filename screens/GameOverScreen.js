@@ -29,7 +29,7 @@ const GameOverScreen = props => {
 
       <View style={styles.resultContainer}>
         <BodyText style={styles.resultText}>
-          It took you
+          It took computer
           <Text style={styles.highlight}> {props.roundsNumber} </Text> rounds to
           guess the number
           <Text style={styles.highlight}> {props.userNumber} </Text>
