@@ -1,5 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
-import { View, Text, StyleSheet, Alert, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Alert,
+  ScrollView,
+  Dimensions
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import BodyText from "../components/BodyText";
@@ -33,11 +40,27 @@ const GameScreen = props => {
   const initialGuess = generatedRandomBetween(1, 100, props.userChoice);
   const [currentGuess, setCurrentGuess] = useState(initialGuess);
   const [pastGuesses, setPastGuesses] = useState([initialGuess]);
+  const [availableDeviceWidth, setAvailableDeviceWidth] = useState(Dimensions.get('window').width);
+  const [availableDeviceHeight, setAvailableDeviceHeight] = useState(Dimensions.get('window').height);
   const currentLow = useRef(1);
   const currentHigh = useRef(100);
 
   // WE USE DESTRUCTURING FOR OBJECTS
   const { userChoice, onGameOver } = props;
+
+  //WHEN OUR COMPONENT RE RENDERS ORIDENTATION CHANGE
+   useEffect(() => {
+     const updateLayout = () => {
+       setAvailableDeviceWidth(Dimensions.get('window').width);
+       setAvailableDeviceHeight(Dimensions.get('window').height);
+
+       Dimensions.addEventListener('change', updateLayout);
+
+       return () => {
+         Dimensions.removeEventListener('change', updateLayout);
+       }
+     }
+   })
 
   useEffect(() => {
     if (currentGuess === userChoice) {
@@ -73,6 +96,31 @@ const GameScreen = props => {
     setPastGuesses(curPastGuesses => [nextNumber, ...curPastGuesses]);
   };
 
+  if (availableDeviceHeight < 500) {
+    return (
+      <View style={styles.screen}>
+        <Text style={DefaultStyles.title}>Oppoent's Guess</Text>
+        <View style={styles.controls}>
+          <MainButton onPress={nextGuessHandler.bind(this, "lower")}>
+            <Ionicons name="md-remove" size={24} color="white" />
+          </MainButton>
+          <NumberContainer>{currentGuess}</NumberContainer>
+          <MainButton onPress={nextGuessHandler.bind(this, "greater")}>
+            <Ionicons name="md-add" size={24} color="white" />
+          </MainButton>
+        </View>
+
+        <View style={styles.listContainer}>
+          <ScrollView contentContainerStyle={styles.list}>
+            {pastGuesses.map((guess, index) =>
+              renderListItem(guess, pastGuesses.length - index)
+            )}
+          </ScrollView>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.screen}>
       <Text style={DefaultStyles.title}>Oppoent's Guess</Text>
@@ -87,7 +135,9 @@ const GameScreen = props => {
       </Card>
       <View style={styles.listContainer}>
         <ScrollView contentContainerStyle={styles.list}>
-          {pastGuesses.map((guess, index) => renderListItem(guess, pastGuesses.length - index))}
+          {pastGuesses.map((guess, index) =>
+            renderListItem(guess, pastGuesses.length - index)
+          )}
         </ScrollView>
       </View>
     </View>
@@ -104,18 +154,25 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
+    marginTop: Dimensions.get("window").height > 600 ? 20 : 5,
+    // if height is greater then 600 use 20 else 5 on smaller than 600 screens
     width: 400,
     maxWidth: "90%"
   },
-  listContainer: {
+  controls: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     width: '80%',
+    alignItems: 'center'
+  },
+  listContainer: {
+    width: Dimensions.get("window").width > 300 ? "60%" : "80%",
     flex: 1
   },
   list: {
     flexGrow: 1, //use this incase u have a special case when list dont scroll again
-    alignItems: 'center',
-    justifyContent: 'flex-end'
+    alignItems: "center",
+    justifyContent: "flex-end"
   },
   listItem: {
     borderColor: "#ccc",
@@ -124,9 +181,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     backgroundColor: "white",
     flexDirection: "row",
-    justifyContent: 'space-between',
-    width: '60%'
-
+    justifyContent: "space-between",
+    width: "60%"
   }
 });
 

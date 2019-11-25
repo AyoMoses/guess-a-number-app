@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -6,7 +6,8 @@ import {
   Button,
   TouchableWithoutFeedback,
   Keyboard,
-  Alert
+  Alert,
+  Dimensions
 } from "react-native";
 
 import Card from "../components/Card";
@@ -14,14 +15,17 @@ import Colors from "../constants/colors";
 import Input from "../components/Input";
 import NumberContainer from "../components/NumberContainer";
 import BodyText from "../components/BodyText";
-import TitleText from '../components/TitleText';
-import MainButton from '../components/MainButton';
+import TitleText from "../components/TitleText";
+import MainButton from "../components/MainButton";
 
 // A FUNCTIONAL COMPONENT
 const StartGameScreen = props => {
   const [enteredValue, setEnteredValue] = useState("");
   const [confirmed, setConfirmed] = useState(false); //confirm if user is ready to move on and intial state is false
   const [selectedNumber, setSlectedNumber] = useState();
+  const [buttonWidth, setButtonWidth] = useState(
+    Dimensions.get("window").width / 4
+  );
 
   const numberInputHandler = inputText => {
     setEnteredValue(inputText.replace(/[^0-9]/g, "")); //regex to check for input not a number globally in the input
@@ -31,6 +35,20 @@ const StartGameScreen = props => {
     setEnteredValue("");
     setConfirmed(false);
   };
+
+  // TO CONTROL SCREEN ORIENTATION
+  useEffect(() => {
+    const updateLayout = () => {
+      setButtonWidth(Dimensions.get("window").width / 4);
+    }; //this makes sure our code reruns when dimensions change
+
+    Dimensions.addEventListener("change", updateLayout);
+    return () => {
+      Dimensions.removeEventListener("change", updateLayout); 
+      //this is CLEANING UP. remove event listener
+    };
+    //the 'change' event listener fires when user rotates device
+  });
 
   const confirmInputHandler = () => {
     const chosenNumber = parseInt(enteredValue);
@@ -58,7 +76,9 @@ const StartGameScreen = props => {
         <BodyText style={styles.chosenOutput}>You picked</BodyText>
         <NumberContainer>{selectedNumber}</NumberContainer>
 
-        <MainButton onPress={() => props.onStartGame(selectedNumber)}>START GAME</MainButton>
+        <MainButton onPress={() => props.onStartGame(selectedNumber)}>
+          START GAME
+        </MainButton>
       </Card>
     );
   }
@@ -86,14 +106,14 @@ const StartGameScreen = props => {
           />
 
           <View style={styles.buttonContainer}>
-            <View style={styles.buttons}>
+            <View style={{ width: buttonWidth }}>
               <Button
                 title="Reset"
                 onPress={resetInputHandler}
                 color={Colors.accent}
               />
             </View>
-            <View style={styles.buttons}>
+            <View style={{ width: buttonWidth }}>
               <Button
                 title="Confirm"
                 onPress={confirmInputHandler}
@@ -120,26 +140,31 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     marginVertical: 10,
-    fontFamily: 'open-sans-bold'
+    fontFamily: "open-sans-bold"
   },
 
   inputContainer: {
-    width: 300,
-    maxWidth: "80%",
+    width: "80%",
+    // maxWidth: "80%",
+    maxWidth: "95%", //to not exceed 95 of large screen
+    minWidth: 300, //to cater for smaller screen devices
     alignItems: "center"
   },
 
   buttonContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
-    paddingHorizontal: 15
+    justifyContent: "space-between"
   },
 
   buttons: {
-    width: 130,
-    padding: 20,
-    borderRadius: 8
+    // width: 130,
+    // borderRadius: 8,
+    // width: Dimensions.get('window').width / 4
+    //Dimensions do not respect orientation changes as it loads once in app life cycle
+    //each button takes times 4 of device they are in
+    //its an API to help the the available pixel on width and height of devices RAD
+    //percentage refers to the direct parent view
   },
 
   input: {
