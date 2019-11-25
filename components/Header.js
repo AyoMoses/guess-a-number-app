@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet, Platform } from "react-native";
 
 import TitleText from '../components/TitleText';
 import Colors from "../constants/colors";
@@ -17,9 +17,15 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 90,
     paddingTop: 36,
-    backgroundColor: Colors.primary,
+    backgroundColor: Platform.OS === 'android' ? Colors.primary : 'white',
+    // IF OS IS ANDROID, MAKE BG PRIMARY ELSE WHITE
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    borderBottomColor: Platform.OS === 'ios' ? '#ccc' : 'transparent',
+    borderBottomWidth: Platform.OS === 'ios' ? 1 : 0
+  },
+  headerTitle: {
+    color: Platform.OS === 'android' ? 'white' : Colors.primary
   }
 });
 
